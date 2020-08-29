@@ -1,5 +1,6 @@
 package com.example.ewallet.models;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,12 +15,11 @@ public class User {
 	private Long id;
 	@NotNull
 	private String userName;
-	@Column(unique=true)
+	@Column(unique=true, nullable = false)
 	private String emailId;
 	@Temporal(javax.persistence.TemporalType.DATE)
 	private Date dateCreated;
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-	private Set<UserTransaction> userTransactions = new HashSet<>();
+	private BigDecimal balance = BigDecimal.ZERO;
 
 	public User() {
 	}
@@ -80,12 +80,12 @@ public class User {
 		this.dateCreated = dateCreated;
 	}
 
-	public Set<UserTransaction> getTransactions() {
-		return userTransactions;
+	public BigDecimal getBalance() {
+		return balance;
 	}
 
-	public void setTransactions(Set<UserTransaction> userTransactions) {
-		this.userTransactions = userTransactions;
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 
 	/** Builder : for user */
@@ -95,6 +95,12 @@ public class User {
 		private String userName;
 		private String email;
 		private Date dateCreated;
+		private BigDecimal balance;
+
+		public UserAccountBuilder setBalance(BigDecimal balance) {
+			this.balance = balance;
+			return this;
+		}
 
 		public Long getId() {
 			return id;

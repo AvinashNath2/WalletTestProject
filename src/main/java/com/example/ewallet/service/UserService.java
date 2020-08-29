@@ -8,7 +8,7 @@ import com.example.ewallet.models.User;
 
 
 /** Service for Users */
-public interface UserAccountService {
+public interface UserService {
 
 	/**
 	 * Save a user

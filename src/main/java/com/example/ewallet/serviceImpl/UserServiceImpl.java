@@ -8,21 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.ewallet.dataaccessrepository.UserAccountRepository;
+import com.example.ewallet.dataaccessrepository.UserRepository;
 import com.example.ewallet.exceptions.UserNotFoundException;
 import com.example.ewallet.models.User;
-import com.example.ewallet.service.UserAccountService;
+import com.example.ewallet.service.UserService;
 import com.google.common.collect.Lists;
 
 @Service
-public class UserAccountServiceImpl implements UserAccountService {
+public class UserServiceImpl implements UserService {
 
 	@Autowired
-	private UserAccountRepository userAccountRepository;
+	private UserRepository userRepository;
 
 	@Override
 	public UserDTO getAccountById(Long accountId) throws UserNotFoundException {
-		User user = userAccountRepository.findById(accountId).orElseThrow(
+		User user = userRepository.findById(accountId).orElseThrow(
 				() -> new UserNotFoundException(String.format("user not found for id :'%d'", accountId)));
 		return UserObjectMapper.doToDTO(user);
 	}
@@ -31,7 +31,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Transactional
 	public UserDTO save(User user) throws Exception {
 		if (user.getUserName() != null) {
-			return UserObjectMapper.doToDTO(userAccountRepository.save(user));
+			return UserObjectMapper.doToDTO(userRepository.save(user));
 		}
 		throw new Exception("user name is mandatory");
 	}
@@ -42,7 +42,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		if (user.getUserName() != null) {
 			user.setId(userAccountId);
 			try {
-				return UserObjectMapper.doToDTO(userAccountRepository.save(user));
+				return UserObjectMapper.doToDTO(userRepository.save(user));
 			} catch (Exception e) {
 				throw new Exception("Try again");
 			}
@@ -52,7 +52,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public List<User> getList() {
-		return Lists.newArrayList(userAccountRepository.findAll());
+		return Lists.newArrayList(userRepository.findAll());
 	}
 
 }

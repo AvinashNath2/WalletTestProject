@@ -5,6 +5,10 @@ import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 /** Client Facing Model of Transaction **/
 public class UserDTO {
 
@@ -12,6 +16,7 @@ public class UserDTO {
 	private Long id;
 
 	private String userName;
+	@NotNull(message = "e-mail must not be empty")
 	private String email;
 	private Date dateCreated;
 

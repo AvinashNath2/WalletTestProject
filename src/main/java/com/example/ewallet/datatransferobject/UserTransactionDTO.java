@@ -11,24 +11,20 @@ public class UserTransactionDTO {
 	@ApiModelProperty(required = false, hidden = true)
 	private Long id;
 
-	@ApiModelProperty(required = false, hidden = true)
-	private Long userAccountId;
-
 	private BigDecimal amount;
 	private String details;
 	private Date transactionDate;
-	private Long transactionReference;
+	private Long transactionHash;
 
 	public UserTransactionDTO() {
 	}
 
 	public UserTransactionDTO(TransactionDTOBuilder builder) {
 		id = builder.id;
-		userAccountId = builder.userAccountId;
 		amount = builder.amount;
 		details = builder.details;
 		transactionDate = builder.transactionDate;
-		transactionReference = builder.transactionReference;
+		transactionHash = builder.transactionReference;
 	}
 
 	public Long getId() {
@@ -37,14 +33,6 @@ public class UserTransactionDTO {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Long getUserAccountId() {
-		return userAccountId;
-	}
-
-	public void setUserAccountId(Long userAccountId) {
-		this.userAccountId = userAccountId;
 	}
 
 	public BigDecimal getAmount() {
@@ -71,18 +59,17 @@ public class UserTransactionDTO {
 		this.transactionDate = transactionDate;
 	}
 
-	public Long getTransactionReference() {
-		return transactionReference;
+	public Long getTransactionHash() {
+		return transactionHash;
 	}
 
-	public void setTransactionReference(Long transactionReference) {
-		this.transactionReference = transactionReference;
+	public void setTransactionHash(Long transactionHash) {
+		this.transactionHash = transactionHash;
 	}
 
 	public static class TransactionDTOBuilder {
 
 		private Long id;
-		private Long userAccountId;
 		private BigDecimal amount;
 		private String details;
 		private Date transactionDate;
@@ -90,11 +77,6 @@ public class UserTransactionDTO {
 
 		public TransactionDTOBuilder setId(Long id) {
 			this.id = id;
-			return this;
-		}
-
-		public TransactionDTOBuilder setUserAccountId(Long userAccountId) {
-			this.userAccountId = userAccountId;
 			return this;
 		}
 

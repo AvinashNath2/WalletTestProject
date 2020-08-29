@@ -14,16 +14,15 @@ public class UserObjectMapper {
 	/** converts DTO to Database Object */
 	public static User dtoToDO(UserDTO a) {
 		User account = new User.UserAccountBuilder().setDateCreated(new Date()).setId(a.getId())
-				.setUserName(a.getUserName()).setEmail(a.getEmail()).build();
+				.setUserName(a.getUserName()).setEmail(a.getEmail()).setBalance(a.getBalance()).build();
 		return account;
 	}
 
 	/** Converts Database Object to DTO */
 	public static UserDTO doToDTO(User a) {
-		double balance = a.getTransactions().stream().mapToDouble(o -> o.getAmount().doubleValue()).sum();
 		UserDTO dto = new UserDTO.UserAccountDTOBuilder().setId(a.getId())
 				.setDateCreated(a.getDateCreated()).setUserName(a.getUserName()).setId(a.getId()).setEmail(a.getEmailId())
-				.setBalance(new BigDecimal(balance)).build();
+				.setBalance(a.getBalance()).build();
 		return dto;
 	}
 

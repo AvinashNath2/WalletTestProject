@@ -3,39 +3,45 @@ package com.example.ewallet.models;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(name="transaction")
 public class UserTransaction {
 
     @Id
     @GeneratedValue
     private Long id;
-    @ManyToOne
-    private User user;
-    @NotNull
+//    @NotNull
     private BigDecimal amount;
+
+    private Long transactionFrom;
+
+    private Long transactionTo;
 
     private String details;
 
+    private BigDecimal commissionAmount;
+
+    private BigDecimal chargeAmount;
+
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date transactionDate;
-    @NotNull
+//    @NotNull
     private String transactionHash;
 
     public UserTransaction() {
     }
 
-    public UserTransaction(User user, BigDecimal amount, String details, Date transactionDate,
-                           String transactionHash) {
-        this.user = user;
+    public UserTransaction(Long id, @NotNull BigDecimal amount, Long transactionFrom, Long transactionTo, String details, BigDecimal commissionAmount, BigDecimal chargeAmount, Date transactionDate, @NotNull String transactionHash) {
+        this.id = id;
         this.amount = amount;
+        this.transactionFrom = transactionFrom;
+        this.transactionTo = transactionTo;
         this.details = details;
+        this.commissionAmount = commissionAmount;
+        this.chargeAmount = chargeAmount;
         this.transactionDate = transactionDate;
         this.transactionHash = transactionHash;
     }
@@ -44,27 +50,57 @@ public class UserTransaction {
 
     public UserTransaction(TransactionBuilder builder) {
         id = builder.id;
-        user = new User(builder.userAccountId);
         amount = builder.amount;
         details = builder.details;
         transactionDate = builder.transactionDate;
-        transactionHash = builder.transactionReference;
+        commissionAmount = builder.commissionAmount;
+        transactionFrom = transactionFrom;
+        transactionTo = transactionTo;
+        chargeAmount = builder.chargeAmount;
+        transactionDate = builder.transactionDate;
+        transactionHash = builder.transactionHash;
     }
+
+
 
     public Long getId() {
         return id;
     }
 
+    public BigDecimal getCommissionAmount() {
+        return commissionAmount;
+    }
+
+    public void setCommissionAmount(BigDecimal commissionAmount) {
+        this.commissionAmount = commissionAmount;
+    }
+
+    public BigDecimal getChargeAmount() {
+        return chargeAmount;
+    }
+
+    public void setChargeAmount(BigDecimal chargeAmount) {
+        this.chargeAmount = chargeAmount;
+    }
+
+    public Long getTransactionFrom() {
+        return transactionFrom;
+    }
+
+    public void setTransactionFrom(Long transactionFrom) {
+        this.transactionFrom = transactionFrom;
+    }
+
+    public Long getTransactionTo() {
+        return transactionTo;
+    }
+
+    public void setTransactionTo(Long transactionTo) {
+        this.transactionTo = transactionTo;
+    }
+
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUserAccount() {
-        return user;
-    }
-
-    public void setUserAccount(User user) {
-        this.user = user;
     }
 
     public BigDecimal getAmount() {
@@ -102,20 +138,42 @@ public class UserTransaction {
     public static class TransactionBuilder {
 
         private Long id;
-        private Long userAccountId;
         private BigDecimal amount;
         private String details;
         private Date transactionDate;
-        private String transactionReference;
+        private BigDecimal commissionAmount;
+        private BigDecimal chargeAmount;
+        private String transactionHash;
+        private Long transactionFrom;
+        private Long transactionTo;
 
         public TransactionBuilder setId(Long id) {
             this.id = id;
             return this;
         }
 
-        public TransactionBuilder setUserAccount(Long userAccountId) {
-            this.userAccountId = userAccountId;
-            return this;
+        public void setTransactionFrom(Long transactionFrom) {
+            this.transactionFrom = transactionFrom;
+        }
+
+        public void setTransactionTo(Long transactionTo) {
+            this.transactionTo = transactionTo;
+        }
+
+        public void setTransactionDate(Date transactionDate) {
+            this.transactionDate = transactionDate;
+        }
+
+        public void setTransactionHash(String transactionHash) {
+            this.transactionHash = transactionHash;
+        }
+
+        public void setCommissionAmount(BigDecimal commissionAmount) {
+            this.commissionAmount = commissionAmount;
+        }
+
+        public void setChargeAmount(BigDecimal chargeAmount) {
+            this.chargeAmount = chargeAmount;
         }
 
         public TransactionBuilder setAmount(BigDecimal amount) {
@@ -125,11 +183,6 @@ public class UserTransaction {
 
         public TransactionBuilder setDetails(String details) {
             this.details = details;
-            return this;
-        }
-
-        public TransactionBuilder setTransactionDate(Date transactionDate) {
-            this.transactionDate = transactionDate;
             return this;
         }
 

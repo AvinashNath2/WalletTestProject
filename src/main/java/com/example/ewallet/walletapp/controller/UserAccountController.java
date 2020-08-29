@@ -1,11 +1,11 @@
 package com.example.ewallet.walletapp.controller;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.example.ewallet.WalletResponse;
+import com.example.ewallet.datatransferobject.CoreResponseDTO;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,63 +21,69 @@ import com.example.ewallet.mapper.UserObjectMapper;
 import com.example.ewallet.exceptions.UserNotFoundException;
 import com.example.ewallet.models.User;
 import com.example.ewallet.service.TransactionService;
-import com.example.ewallet.service.UserAccountService;
+import com.example.ewallet.service.UserService;
 
+import javax.validation.Valid;
+
+import static com.example.ewallet.WalletResponse.FAILURE400;
+import static com.example.ewallet.WalletResponse.USERNOTFOUND404;
+
+@Slf4j
 @RestController
 @RequestMapping("v1/users")
+@AllArgsConstructor
 public class UserAccountController {
 
-	@Autowired
-	private UserAccountService userAccountService;
+	private final UserService userService;
 
-	@Autowired
-	private TransactionService transactionService;
+	private final TransactionService transactionService;
 
 	@GetMapping
-	public ResponseEntity getAllUsers() {
-		List<User> users = userAccountService.getList();
-		return new ResponseEntity<List<UserDTO>>(UserObjectMapper.doToDTOList(users), HttpStatus.OK);
+	public ResponseEntity<?> getAllUsers() {
+		List<User> users = userService.getList();
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.SUCCESS200, UserObjectMapper.doToDTOList(users));
 	}
 
-
 	@PostMapping
-	public ResponseEntity createUser(@RequestBody UserDTO userDTO) {
+	public ResponseEntity<?> createUser(@RequestBody @Valid UserDTO userDTO) {
 		UserDTO saved;
 		try {
-			saved = userAccountService.save(UserObjectMapper.dtoToDO(userDTO));
-		} catch (Exception ex) {
-			Logger.getLogger(UserAccountController.class.getName()).log(Level.SEVERE, null, ex);
-			return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+			saved = userService.save(UserObjectMapper.dtoToDO(userDTO));
+		} catch (Exception e) {
+			log.error("[createUser] error occurred while creating user : {}",e.getMessage(), e);
+			return CoreResponseDTO.buildWithFailure(FAILURE400);
 		}
-		return new ResponseEntity<UserDTO>(saved, HttpStatus.CREATED);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.USERCREATED201, saved);
 	}
 
 
 	@GetMapping("/{id}")
-	public ResponseEntity getUser(@PathVariable("id") Long id) {
+	public ResponseEntity<?> getUser(@PathVariable("id") Long id) {
 		UserDTO user;
 		try {
-			user = userAccountService.getAccountById(id);
-		} catch (UserNotFoundException ex) {
-			Logger.getLogger(UserAccountController.class.getName()).log(Level.SEVERE, null, ex);
-			return new ResponseEntity<String>(ex.getMessage(), HttpStatus.NOT_FOUND);
+			user = userService.getAccountById(id);
+		} catch (UserNotFoundException e) {
+			log.error("[getUser] error occurred while getting user by Id: {}", id, e);
+			return CoreResponseDTO.buildWithFailure(USERNOTFOUND404);
 		}
-		return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.SUCCESS200, user);
 
 	}
+
 
 	@PutMapping("/{id}")
 	public ResponseEntity updateUser(@PathVariable("id") Long userAccountId,
 			@RequestBody UserDTO userDTO) {
 		UserDTO saved;
 		try {
-			saved = userAccountService.update(UserObjectMapper.dtoToDO(userDTO), userAccountId);
-		} catch (Exception ex) {
-			Logger.getLogger(UserAccountController.class.getName()).log(Level.SEVERE, null, ex);
-			return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+			saved = userService.update(UserObjectMapper.dtoToDO(userDTO), userAccountId);
+		} catch (Exception e) {
+			log.error("[updateUser] error occurred while getting user by Id: {}", userAccountId, e);
+			return CoreResponseDTO.buildWithFailure(USERNOTFOUND404);
 		}
-		return new ResponseEntity<UserDTO>(saved, HttpStatus.OK);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.SUCCESS200, saved);
 	}
+
 
 	@GetMapping("/{id}/transactions")
 	public ResponseEntity getUserTransaction(@PathVariable("id") Long id) {
@@ -85,8 +91,9 @@ public class UserAccountController {
 		try {
 			allTransaction = transactionService.transactionsByUserAccountID(id);
 		} catch (Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+			log.error("[getUserTransaction] error occurred while getting transaction by userId: {}", id, e);
+			return CoreResponseDTO.buildWithFailure(USERNOTFOUND404);
 		}
-		return new ResponseEntity<List<UserTransactionDTO>>(allTransaction, HttpStatus.OK);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.SUCCESS200, allTransaction);
 	}
 }
