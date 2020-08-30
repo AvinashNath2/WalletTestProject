@@ -11,6 +11,7 @@ import com.example.ewallet.models.UserTransaction;
  */
 public class TransactionObjectMapper {
 
+    /** converts DTO to Database Object */
     public static UserTransaction dtoToDO(UserTransactionDTO transaction) {
         UserTransaction userTransaction = new UserTransaction.TransactionBuilder()
                 .setAmount(transaction.getAmount()).setId(transaction.getId()).setDetails(transaction.getDetails())
@@ -18,6 +19,7 @@ public class TransactionObjectMapper {
         return userTransaction;
     }
 
+    /** converts Database Object to DTO*/
     public static UserTransactionDTO doToDTO(UserTransaction transaction) {
         UserTransactionDTO userTransactionDTO = new UserTransactionDTO.TransactionDTOBuilder().setAmount(transaction.getAmount()).setId(transaction.getId())
                 .setDetails(transaction.getDetails()).setTransactionUpdatedDate(transaction.getTransactionUpdatedDate()).setTransactionHash(transaction.getTransactionHash()).setTransactionStatus(transaction.getTransactionStatus())
@@ -25,6 +27,7 @@ public class TransactionObjectMapper {
         return userTransactionDTO;
     }
 
+    /** converts Database Object to DTO List*/
     public static List<UserTransactionDTO> doToDTOList(List<UserTransaction> userTransactions) {
         return userTransactions.stream().map(TransactionObjectMapper::doToDTO).collect(Collectors.toList());
     }

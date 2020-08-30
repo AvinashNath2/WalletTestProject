@@ -22,6 +22,6 @@ public interface UserTransactionRepository extends CrudRepository<UserTransactio
 	/**
 	 * gets list of transactions of all particular account
 	 */
-	@Query(nativeQuery = true, value = "select * from transaction where transaction_status = :transactionStatus and transaction_from = :userId or transaction_to = :userId")
-	List<UserTransaction> getTransactionByTransactionStatus(Long userId, TransactionStatus transactionStatus);
+	@Query(nativeQuery = true, value = "select * from transaction where transaction_status = :transactionStatus and (transaction_from = :userId or transaction_to = :userId)")
+	List<UserTransaction> getTransactionByTransactionStatus(Long userId, String transactionStatus);
 }

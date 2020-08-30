@@ -26,47 +26,61 @@ import java.util.List;
 @RequestMapping("v1/transferTo")
 public class TransactionController {
 
+	public static final String ERROR400 = "ERROR400";
+
 	private final TransactionService transactionService;
 
-	@PostMapping("/{id}")
+	/**
+	 * Create transaction for user : Add Money
+	 */
+	@PostMapping("/wallet/{id}")
 	public ResponseEntity<?> addMoney(@PathVariable("id") Long userAccountId, @RequestBody UserTransactionDTO transactionDTO) {
-		UserTransactionDTO saved;
+		UserTransactionDTO userTransactionDTO = null;
 		try {
-			saved = transactionService.createTransaction(transactionDTO, userAccountId);
+			userTransactionDTO = transactionService.createTransaction(transactionDTO, userAccountId);
 		} catch (BalanceLowException e) {
 			log.error("[addMoney] error occurred while getting user by Id: {}", userAccountId, e);
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			return CoreResponseDTO.buildWithFailureCodes(e.getMessage(), ERROR400, HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			log.error("[addMoney] error occurred while getting user by Id: {}", userAccountId, e);
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			CoreResponseDTO.buildWithFailureCodes(e.getMessage(), ERROR400, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<UserTransactionDTO>(saved, HttpStatus.CREATED);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.TRANSACTIONCREATED201, userTransactionDTO);
 	}
 
-	@PostMapping("/reverse/{transactionHash}")
+	/**
+	 * Reverse transaction for user : Only for those transaction that have occurred between 2 different user - not for all money transaction
+	 */
+	@PutMapping("/reverse/{transactionHash}")
 	public ResponseEntity<?> revertTransaction(@PathVariable("transactionHash") String reverseTransaction) {
-		MoneyTransferDto saved;
+		MoneyTransferDto saved = null;
 		try {
 			saved = transactionService.reverseTransaction(reverseTransaction);
 		} catch (Exception e) {
 			log.error("[revertTransaction] error occurred while reversing transaction Hash: {}", reverseTransaction, e);
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			return CoreResponseDTO.buildWithFailureCodes(e.getMessage(), ERROR400, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<MoneyTransferDto>(saved, HttpStatus.CREATED);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.TRANSACTIONUPDATED200, saved);
 	}
 
-	@PostMapping("/inquiry")
+	/**
+	 * Enquiry of transaction by status
+	 */
+	@GetMapping("/inquiry")
 	public ResponseEntity<?> inquiryTransaction(@RequestParam("transactionStatus") TransactionStatus transactionStatus, @RequestHeader("userId") Long userId) {
 		List<UserTransaction> transactions;
 		try {
 			transactions = transactionService.getTransactionByStatus(transactionStatus, userId);
 		} catch (Exception e) {
 			log.error("[inquiryTransaction] error occurred while reversing transaction Hash: {}", transactionStatus, e);
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			return CoreResponseDTO.buildWithFailureCodes(e.getMessage(), ERROR400, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<List<UserTransaction>>(transactions, HttpStatus.CREATED);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.SUCCESS200, transactions);
 	}
 
+	/**
+	 * Transfer money from one account to other account
+	 */
 	@PostMapping("/{toUser}/from/{fromUser}")
 	public ResponseEntity<?> transferMoney(@PathVariable(value = "toUser") Long toUserAccountId,
 			@PathVariable("fromUser") Long fromUserAccountId, @RequestBody UserTransactionDTO walletDTO) {
@@ -78,8 +92,8 @@ public class TransactionController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (BalanceLowException e) {
 			log.error("[transferMoney] error occurred while transferring money to: {}", toUserAccountId, e);
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			return CoreResponseDTO.buildWithFailureCodes(e.getMessage(), ERROR400, HttpStatus.BAD_REQUEST);
 		}
-		return CoreResponseDTO.buildWithSuccess(WalletResponse.SUCCESS200, transactionInfo);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.TRANSACTIONCREATED201, transactionInfo);
 	}
 }

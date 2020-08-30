@@ -9,7 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name="transaction")
+@Table(name = "transaction")
 public class UserTransaction {
 
     @Id
@@ -52,7 +52,9 @@ public class UserTransaction {
         this.transactionStatus = transactionStatus;
     }
 
-    /** Builder : for Transaction */
+    /**
+     * Builder : for Transaction
+     */
 
     public UserTransaction(TransactionBuilder builder) {
         id = builder.id;

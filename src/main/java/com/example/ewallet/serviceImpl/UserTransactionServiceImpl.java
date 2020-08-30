@@ -15,8 +15,6 @@ import com.example.ewallet.models.TransactionStatus;
 import com.example.ewallet.models.User;
 import com.example.ewallet.models.UserTransaction;
 import com.example.ewallet.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,7 +69,7 @@ public class UserTransactionServiceImpl implements TransactionService {
 
     @Override
     public PassbookDTO getPassbookDetail(Long accountId) throws UserNotFoundException {
-        UserDTO account = userService.getAccountById(accountId);
+        UserDTO account = userService.getUserByAccountId(accountId);
         PassbookDTO passbookDTO = PassbookDTO.builder().transactions(TransactionObjectMapper.doToDTOList(userTransactionRepository.getTransactionByUserId(accountId))).userProfile(account).build();
         return passbookDTO;
     }
@@ -90,7 +88,7 @@ public class UserTransactionServiceImpl implements TransactionService {
         BigDecimal totalChargeAmount = transaction.getAmount().add(transaction.getCommissionAmount()).add(transaction.getChargeAmount());
         userFrom.setBalance(userTo.getBalance().add(totalChargeAmount));
         userTo.setBalance(userTo.getBalance().subtract(transaction.getAmount()));
-        transaction.setTransactionStatus(TransactionStatus.INACTIVE);
+        transaction.setTransactionStatus(TransactionStatus.REVERTED);
         userFrom = userRepository.save(userFrom);
         userTo = userRepository.save(userTo);
 
@@ -103,7 +101,7 @@ public class UserTransactionServiceImpl implements TransactionService {
 
     @Override
     public List<UserTransaction> getTransactionByStatus(TransactionStatus transactionStatus, Long userId) throws UserNotFoundException {
-        return userTransactionRepository.getTransactionByTransactionStatus(userId, transactionStatus);
+        return userTransactionRepository.getTransactionByTransactionStatus(userId, transactionStatus.toString());
     }
 
     @Transactional
@@ -114,6 +112,10 @@ public class UserTransactionServiceImpl implements TransactionService {
                 () -> new UserNotFoundException(String.format("user not found for id :'%d'", fromUserAccountId)));
         User userTo = userRepository.findById(toUserAccountId).orElseThrow(
                 () -> new UserNotFoundException(String.format("user not found for id :'%d'", toUserAccountId)));
+
+        if(userFrom.getId().equals(userTo.getId())){
+            throw new SystemException(HttpStatus.BAD_REQUEST.value(), "Cannot preform transaction to same account - please check account Id");
+        }
 
         BigDecimal totalAmountToBeDeducted = userTransactionDTO.getAmount().add(userTransactionDTO.getAmount().multiply(commissionAmount).add(userTransactionDTO.getAmount().multiply(chargeAmount)));
 

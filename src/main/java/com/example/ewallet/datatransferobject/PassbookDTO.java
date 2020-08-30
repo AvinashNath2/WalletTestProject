@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-
+/** Client Facing Model of PassBook **/
 @Getter
 @Setter
 @Builder

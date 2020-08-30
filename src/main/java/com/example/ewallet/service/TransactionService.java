@@ -11,29 +11,31 @@ import com.example.ewallet.models.TransactionStatus;
 import com.example.ewallet.models.UserTransaction;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-/** Service for Transaction */
+/**
+ * Service for Transaction
+ */
 public interface TransactionService {
 
-	/**
-	 * gets list of transactions by account id
-	 */
-	PassbookDTO getPassbookDetail(Long accountId) throws UserNotFoundException;
+    /**
+     * gets list of transactions by account id
+     */
+    PassbookDTO getPassbookDetail(Long accountId) throws UserNotFoundException;
 
-	/**
-	 * reverse transaction for an account
-	 */
-	MoneyTransferDto reverseTransaction(String transactionHash) throws UserNotFoundException;
+    /**
+     * reverse transaction for an account
+     */
+    MoneyTransferDto reverseTransaction(String transactionHash) throws UserNotFoundException;
 
 
-	List<UserTransaction> getTransactionByStatus(TransactionStatus transactionStatus, Long userId) throws UserNotFoundException;
+    List<UserTransaction> getTransactionByStatus(TransactionStatus transactionStatus, Long userId) throws UserNotFoundException;
 
-	/**
-	 * create transaction for an account
-	 */
-	UserTransactionDTO createTransaction(UserTransactionDTO userTransactionDTO,Long userAccountId) throws BalanceLowException;
+    /**
+     * create transaction for an account
+     */
+    UserTransactionDTO createTransaction(UserTransactionDTO userTransactionDTO, Long userAccountId) throws BalanceLowException;
 
-	/**
-	 * Transfer Money from one user to other
-	 */
-	MoneyTransferDto transferMoneyFromOneUserToAnother(UserTransactionDTO walletDTO, Long toUserAccountId, Long fromUserAccountId) throws UserNotFoundException,BalanceLowException;
+    /**
+     * Transfer Money from one user to other
+     */
+    MoneyTransferDto transferMoneyFromOneUserToAnother(UserTransactionDTO walletDTO, Long toUserAccountId, Long fromUserAccountId) throws UserNotFoundException, BalanceLowException;
 }
