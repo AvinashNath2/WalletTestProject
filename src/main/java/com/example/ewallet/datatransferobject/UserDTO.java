@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -18,8 +19,8 @@ public class UserDTO {
 	private String userName;
 	@NotNull(message = "e-mail must not be empty")
 	private String email;
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	private Date dateCreated;
-
 	@ApiModelProperty(required = false, hidden = true)
 	private BigDecimal balance;
 

@@ -2,27 +2,16 @@
 
 ## Problem statement:
 
-Create a User Wallet system where a user can come and register for a wallet. User will be able
-to make userTransactions using wallet
-Write APIs for
-1. Create a User Account - Sign-in/Sign-up
-2. Update/View User Profile
-3. Add Money To Wallet
-4. Pay Money From Wallet
-5. View Passbook - All Transactions
-
-## Installation
-
-- Install Spring Tool Suite, Maven and Java8
-- Clone the project and import it as Maven project in Spring Tool Suite
-- run `mvn clean install` inside project terminal
+-- wallet shoud be able to do this
+1) Create a User Account - Sign-in/Sign-up
+2) Add Money To Wallet
+3) Transferring money from one wallet to another
+4) Compute charges and commission
+5) Do status inquiry of a transaction
+6) Reversal of a transaction
+7) View Passbook - All Transactions with all legs of a transaction of the user
 
 ## Running App
 - run project as Spring Boot Application
 - open `http://localhost:8080/swagger-ui.html` in browser
 - Enter Parameters in any Api
-- Click on Try it Out
-
-## Screenshots
-
-![Api List](screenshots/apiList.PNG)

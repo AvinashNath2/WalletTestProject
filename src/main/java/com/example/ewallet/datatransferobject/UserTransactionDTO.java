@@ -3,7 +3,12 @@ package com.example.ewallet.datatransferobject;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.example.ewallet.models.TransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 /** Client Facing Model of Transaction **/
 public class UserTransactionDTO {
@@ -13,8 +18,11 @@ public class UserTransactionDTO {
 
 	private BigDecimal amount;
 	private String details;
-	private Date transactionDate;
-	private Long transactionHash;
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private Date transactionUpdatedDate;
+	private String transactionHash;
+	@Enumerated(EnumType.STRING)
+	private TransactionStatus transactionStatus;
 
 	public UserTransactionDTO() {
 	}
@@ -23,8 +31,17 @@ public class UserTransactionDTO {
 		id = builder.id;
 		amount = builder.amount;
 		details = builder.details;
-		transactionDate = builder.transactionDate;
-		transactionHash = builder.transactionReference;
+		transactionUpdatedDate = builder.transactionUpdatedDate;
+		transactionHash = builder.transactionHash;
+		transactionStatus = builder.transactionStatus;
+	}
+
+	public TransactionStatus getTransactionStatus() {
+		return transactionStatus;
+	}
+
+	public void setTransactionStatus(TransactionStatus transactionStatus) {
+		this.transactionStatus = transactionStatus;
 	}
 
 	public Long getId() {
@@ -51,19 +68,19 @@ public class UserTransactionDTO {
 		this.details = details;
 	}
 
-	public Date getTransactionDate() {
-		return transactionDate;
+	public Date getTransactionUpdatedDate() {
+		return transactionUpdatedDate;
 	}
 
-	public void setTransactionDate(Date transactionDate) {
-		this.transactionDate = transactionDate;
+	public void setTransactionUpdatedDate(Date transactionUpdatedDate) {
+		this.transactionUpdatedDate = transactionUpdatedDate;
 	}
 
-	public Long getTransactionHash() {
+	public String getTransactionHash() {
 		return transactionHash;
 	}
 
-	public void setTransactionHash(Long transactionHash) {
+	public void setTransactionHash(String transactionHash) {
 		this.transactionHash = transactionHash;
 	}
 
@@ -72,8 +89,14 @@ public class UserTransactionDTO {
 		private Long id;
 		private BigDecimal amount;
 		private String details;
-		private Date transactionDate;
-		private Long transactionReference;
+		private Date transactionUpdatedDate;
+		private String transactionHash;
+		private TransactionStatus transactionStatus;
+
+		public TransactionDTOBuilder setTransactionStatus(TransactionStatus transactionStatus) {
+			this.transactionStatus = transactionStatus;
+			return this;
+		}
 
 		public TransactionDTOBuilder setId(Long id) {
 			this.id = id;
@@ -90,13 +113,13 @@ public class UserTransactionDTO {
 			return this;
 		}
 
-		public TransactionDTOBuilder setTransactionDate(Date transactionDate) {
-			this.transactionDate = transactionDate;
+		public TransactionDTOBuilder setTransactionUpdatedDate(Date transactionUpdatedDate) {
+			this.transactionUpdatedDate = transactionUpdatedDate;
 			return this;
 		}
 
-		public TransactionDTOBuilder setTransactionReference(Long transactionReference) {
-			this.transactionReference = transactionReference;
+		public TransactionDTOBuilder setTransactionHash(String transactionHash) {
+			this.transactionHash = transactionHash;
 			return this;
 		}
 

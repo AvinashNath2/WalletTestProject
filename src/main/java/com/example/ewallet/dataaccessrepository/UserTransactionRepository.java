@@ -1,9 +1,9 @@
 package com.example.ewallet.dataaccessrepository;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.ewallet.models.TransactionStatus;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -12,14 +12,16 @@ import com.example.ewallet.models.UserTransaction;
 public interface UserTransactionRepository extends CrudRepository<UserTransaction, Long> {
 
 	/**
-	 * gets transaction by id
+	 * gets list of transactions of all particular account
 	 */
-	@Query(nativeQuery = true, value = "select * from transaction where transaction_reference = ?")
-	Optional<UserTransaction> getTransactionyId(Long transactionId);
+	@Query(nativeQuery = true, value = "select * from transaction where transaction_from = :userId or transaction_to = :userId")
+	List<UserTransaction> getTransactionByUserId(Long userId);
+
+	Optional<UserTransaction> findByTransactionHash(String hash);
 
 	/**
-	 * gets list of transactions of particular account
+	 * gets list of transactions of all particular account
 	 */
-//	List<UserTransaction> findByTransactionFromOrTransactionTo(Long accountId);
-	List<UserTransaction> findByTransactionFrom(Long accountId);
+	@Query(nativeQuery = true, value = "select * from transaction where transaction_status = :transactionStatus and transaction_from = :userId or transaction_to = :userId")
+	List<UserTransaction> getTransactionByTransactionStatus(Long userId, TransactionStatus transactionStatus);
 }

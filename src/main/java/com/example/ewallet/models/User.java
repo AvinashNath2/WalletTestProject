@@ -1,5 +1,8 @@
 package com.example.ewallet.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,13 +14,13 @@ import javax.validation.constraints.NotNull;
 public class User {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
 	private String userName;
 	@Column(unique=true, nullable = false)
 	private String emailId;
-	@Temporal(javax.persistence.TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	private Date dateCreated;
 	private BigDecimal balance = BigDecimal.ZERO;
 

@@ -20,7 +20,7 @@ public class TransactionObjectMapper {
 
     public static UserTransactionDTO doToDTO(UserTransaction transaction) {
         UserTransactionDTO userTransactionDTO = new UserTransactionDTO.TransactionDTOBuilder().setAmount(transaction.getAmount()).setId(transaction.getId())
-                .setDetails(transaction.getDetails()).setTransactionDate(transaction.getTransactionDate())
+                .setDetails(transaction.getDetails()).setTransactionUpdatedDate(transaction.getTransactionUpdatedDate()).setTransactionHash(transaction.getTransactionHash()).setTransactionStatus(transaction.getTransactionStatus())
                 .build();
         return userTransactionDTO;
     }

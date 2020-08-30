@@ -14,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class ApplicationConfig {
+public class AppConfig {
 	@Bean
     public Docket productApi() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -31,7 +31,7 @@ public class ApplicationConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Simple Wallet API")
-                .description("API to make account and create transactions")
+                .description("API to create account and transactions")
                 .version("1.0")
                 .build();
     }

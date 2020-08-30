@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.ewallet.WalletResponse;
 import com.example.ewallet.datatransferobject.CoreResponseDTO;
+import com.example.ewallet.datatransferobject.PassbookDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.ewallet.datatransferobject.UserTransactionDTO;
 import com.example.ewallet.datatransferobject.UserDTO;
 import com.example.ewallet.mapper.UserObjectMapper;
 import com.example.ewallet.exceptions.UserNotFoundException;
@@ -85,15 +85,15 @@ public class UserAccountController {
 	}
 
 
-	@GetMapping("/{id}/transactions")
+	@GetMapping("/{id}/passbook")
 	public ResponseEntity getUserTransaction(@PathVariable("id") Long id) {
-		List<UserTransactionDTO> allTransaction;
+		PassbookDTO passbookDTO;
 		try {
-			allTransaction = transactionService.transactionsByUserAccountID(id);
+			passbookDTO = transactionService.getPassbookDetail(id);
 		} catch (Exception e) {
 			log.error("[getUserTransaction] error occurred while getting transaction by userId: {}", id, e);
 			return CoreResponseDTO.buildWithFailure(USERNOTFOUND404);
 		}
-		return CoreResponseDTO.buildWithSuccess(WalletResponse.SUCCESS200, allTransaction);
+		return CoreResponseDTO.buildWithSuccess(WalletResponse.SUCCESS200, passbookDTO);
 	}
 }

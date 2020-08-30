@@ -1,5 +1,7 @@
 package com.example.ewallet.models;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -11,9 +13,9 @@ import javax.validation.constraints.NotNull;
 public class UserTransaction {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @NotNull
+    @NotNull
     private BigDecimal amount;
 
     private Long transactionFrom;
@@ -26,15 +28,18 @@ public class UserTransaction {
 
     private BigDecimal chargeAmount;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date transactionDate;
-//    @NotNull
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    private Date transactionUpdatedDate;
+    @NotNull
     private String transactionHash;
+
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus transactionStatus;
 
     public UserTransaction() {
     }
 
-    public UserTransaction(Long id, @NotNull BigDecimal amount, Long transactionFrom, Long transactionTo, String details, BigDecimal commissionAmount, BigDecimal chargeAmount, Date transactionDate, @NotNull String transactionHash) {
+    public UserTransaction(Long id, @NotNull BigDecimal amount, Long transactionFrom, Long transactionTo, String details, BigDecimal commissionAmount, BigDecimal chargeAmount, Date transactionUpdatedDate, @NotNull String transactionHash, TransactionStatus transactionStatus) {
         this.id = id;
         this.amount = amount;
         this.transactionFrom = transactionFrom;
@@ -42,8 +47,9 @@ public class UserTransaction {
         this.details = details;
         this.commissionAmount = commissionAmount;
         this.chargeAmount = chargeAmount;
-        this.transactionDate = transactionDate;
+        this.transactionUpdatedDate = transactionUpdatedDate;
         this.transactionHash = transactionHash;
+        this.transactionStatus = transactionStatus;
     }
 
     /** Builder : for Transaction */
@@ -52,16 +58,22 @@ public class UserTransaction {
         id = builder.id;
         amount = builder.amount;
         details = builder.details;
-        transactionDate = builder.transactionDate;
+        transactionUpdatedDate = builder.transactionDate;
         commissionAmount = builder.commissionAmount;
         transactionFrom = transactionFrom;
         transactionTo = transactionTo;
         chargeAmount = builder.chargeAmount;
-        transactionDate = builder.transactionDate;
+        transactionUpdatedDate = builder.transactionDate;
         transactionHash = builder.transactionHash;
     }
 
+    public TransactionStatus getTransactionStatus() {
+        return transactionStatus;
+    }
 
+    public void setTransactionStatus(TransactionStatus transactionStatus) {
+        this.transactionStatus = transactionStatus;
+    }
 
     public Long getId() {
         return id;
@@ -119,12 +131,12 @@ public class UserTransaction {
         this.details = details;
     }
 
-    public Date getTransactionDate() {
-        return transactionDate;
+    public Date getTransactionUpdatedDate() {
+        return transactionUpdatedDate;
     }
 
-    public void setTransactionDate(Date transactionDate) {
-        this.transactionDate = transactionDate;
+    public void setTransactionUpdatedDate(Date transactionUpdatedDate) {
+        this.transactionUpdatedDate = transactionUpdatedDate;
     }
 
     public String getTransactionHash() {
@@ -146,10 +158,15 @@ public class UserTransaction {
         private String transactionHash;
         private Long transactionFrom;
         private Long transactionTo;
+        private TransactionStatus transactionStatus;
 
         public TransactionBuilder setId(Long id) {
             this.id = id;
             return this;
+        }
+
+        public void setTransactionStatus(TransactionStatus transactionStatus) {
+            this.transactionStatus = transactionStatus;
         }
 
         public void setTransactionFrom(Long transactionFrom) {
